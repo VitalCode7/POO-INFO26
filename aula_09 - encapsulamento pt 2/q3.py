@@ -1,18 +1,36 @@
 class conta_banc:
-    def __init__(self):
-        self.nome = input("Digite seu nome: ")
-        self.num = input("Digite o número da sua conta: ")
-        self.saldo = float(input("Digite seu saldo: "))
-
+    def __init__(self, nome, numero, saldo):
+        self.__nome = nome
+        self.__numero = numero
+        self.__saldo = saldo
+    
+    def set_nome(self, n):
+        self.__nome = n
+    
+    def set_numero(self, num):
+        self.__numero = num
+    
+    def set_saldo(self, s):
+        self.__saldo = s
+    
+    def get_nome(self):
+        return self.__nome
+    
+    def get_numero(self):
+        return self.__numero
+    
+    def get_saldo(self):
+        return self.__saldo
+    
     def sacar(self):
         saque = float(input("Quanto você deseja sacar? "))
-        self.saldo -= saque
-        return self.saldo
+        self.__saldo -= saque
+        return self.__saldo
 
     def depositar(self):
         deposito = float(input("Quanto você deseja depositar? "))
-        self.saldo += deposito
-        return self.saldo
+        self.__saldo += deposito
+        return self.__saldo
 
     def menu(self):
         i = 1
@@ -25,4 +43,4 @@ class conta_banc:
 
 x = conta_banc()
 x.menu()
-print(f"Saldo final: {x.saldo}")
+print(f"Saldo final: {x.__saldo}")

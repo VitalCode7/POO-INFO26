@@ -21,7 +21,8 @@ class Time:
 
     def __str__(self):
         return f"ID: {self.__id} | Nome: {self.__nome} | Estado: {self.__estado}"
-    
+
+
 class Jogador:
     def __init__(self, id, nome, camisa, id_time):
         self.__id = id
@@ -51,8 +52,12 @@ class Jogador:
         self.__id_time = id_time
 
     def __str__(self):
-        return f"ID: {self.__id} | Nome: {self.__nome} | Camisa: {self.__camisa} | Time: {self.__id_time}"
-    
+        return (
+            f"ID: {self.__id} | Nome: {self.__nome} | "
+            f"Camisa: {self.__camisa} | Time: {self.__id_time}"
+        )
+
+
 class UI:
     times = []
     jogadores = []
@@ -70,36 +75,42 @@ class UI:
         print("8 - Excluir Jogador")
         print("9 - Listar Jogadores do Time")
         print("10 - Transferir Jogador")
-        print("0 - Sair")
+        print("11 - Sair")
 
-    # TIMES
-    @staticmethod
-    def inserir_time():
+        return int(input("Escolha uma opção: "))
+
+    # ================= TIMES =================
+
+    @classmethod
+    def inserir_time(cls):
         id = int(input("ID: "))
+
+        for t in cls.times:
+            if t.get_id() == id:
+                print("Já existe um time com esse ID.")
+                return
+
         nome = input("Nome: ")
         estado = input("Estado: ")
 
         t = Time(id, nome, estado)
-
-        UI.times.append(t)
+        cls.times.append(t)
 
         print("Time cadastrado!")
 
-    @staticmethod
-    def listar_times():
-        if len(UI.times) == 0:
+    @classmethod
+    def listar_times(cls):
+        if len(cls.times) == 0:
             print("Nenhum time cadastrado.")
-
         else:
-            for t in UI.times:
+            for t in cls.times:
                 print(t)
 
-    @staticmethod
-    def atualizar_time():
+    @classmethod
+    def atualizar_time(cls):
         id = int(input("ID do time: "))
 
-        for t in UI.times:
-
+        for t in cls.times:
             if t.get_id() == id:
 
                 nome = input("Novo nome: ")
@@ -109,56 +120,76 @@ class UI:
                 t.set_estado(estado)
 
                 print("Time atualizado!")
-
                 return
 
         print("Time não encontrado!")
 
-    @staticmethod
-    def excluir_time():
+    @classmethod
+    def excluir_time(cls):
         id = int(input("ID do time: "))
 
-        for t in UI.times:
+        # verifica se há jogadores no time
+        for j in cls.jogadores:
+            if j.get_id_time() == id:
+                print("Não é possível excluir um time com jogadores.")
+                return
 
+        for t in cls.times:
             if t.get_id() == id:
 
-                UI.times.remove(t)
+                cls.times.remove(t)
 
                 print("Time removido!")
-
                 return
 
         print("Time não encontrado!")
 
-    # JOGADORES
-    @staticmethod
-    def inserir_jogador():
+    # ================= JOGADORES =================
+
+    @classmethod
+    def inserir_jogador(cls):
         id = int(input("ID: "))
+
+        for j in cls.jogadores:
+            if j.get_id() == id:
+                print("Já existe um jogador com esse ID.")
+                return
+
         nome = input("Nome: ")
         camisa = int(input("Número da camisa: "))
         id_time = int(input("ID do time: "))
 
+        # verifica se o time existe
+        existe = False
+
+        for t in cls.times:
+            if t.get_id() == id_time:
+                existe = True
+                break
+
+        if not existe:
+            print("Time não encontrado.")
+            return
+
         j = Jogador(id, nome, camisa, id_time)
 
-        UI.jogadores.append(j)
+        cls.jogadores.append(j)
 
         print("Jogador cadastrado!")
 
-    @staticmethod
-    def listar_jogadores():
-        if len(UI.jogadores) == 0:
+    @classmethod
+    def listar_jogadores(cls):
+        if len(cls.jogadores) == 0:
             print("Nenhum jogador cadastrado.")
-
         else:
-            for j in UI.jogadores:
+            for j in cls.jogadores:
                 print(j)
 
-    @staticmethod
-    def atualizar_jogador():
+    @classmethod
+    def atualizar_jogador(cls):
         id = int(input("ID do jogador: "))
 
-        for j in UI.jogadores:
-
+        for j in cls.jogadores:
             if j.get_id() == id:
 
                 nome = input("Novo nome: ")
@@ -168,57 +199,61 @@ class UI:
                 j.set_camisa(camisa)
 
                 print("Jogador atualizado!")
-
                 return
 
         print("Jogador não encontrado!")
 
-    @staticmethod
-    def excluir_jogador():
+    @classmethod
+    def excluir_jogador(cls):
         id = int(input("ID do jogador: "))
 
-        for j in UI.jogadores:
-
+        for j in cls.jogadores:
             if j.get_id() == id:
 
-                UI.jogadores.remove(j)
+                cls.jogadores.remove(j)
 
                 print("Jogador removido!")
-
                 return
 
         print("Jogador não encontrado!")
 
-    @staticmethod
-    def listar_jogadores_do_time():
+    @classmethod
+    def listar_jogadores_do_time(cls):
         id_time = int(input("ID do time: "))
 
         encontrou = False
 
-        for j in UI.jogadores:
-
+        for j in cls.jogadores:
             if j.get_id_time() == id_time:
-
                 print(j)
-
                 encontrou = True
 
-        if encontrou == False:
+        if not encontrou:
             print("Nenhum jogador encontrado para esse time.")
 
-    @staticmethod
-    def transferir_jogador():
+    @classmethod
+    def transferir_jogador(cls):
         id_jogador = int(input("ID do jogador: "))
         novo_time = int(input("Novo ID do time: "))
 
-        for j in UI.jogadores:
+        # verifica se o novo time existe
+        existe = False
 
+        for t in cls.times:
+            if t.get_id() == novo_time:
+                existe = True
+                break
+
+        if not existe:
+            print("Time não encontrado.")
+            return
+
+        for j in cls.jogadores:
             if j.get_id() == id_jogador:
 
                 j.set_id_time(novo_time)
 
                 print("Jogador transferido!")
-
                 return
 
         print("Jogador não encontrado!")
@@ -226,13 +261,11 @@ class UI:
     @staticmethod
     def main():
 
-        op = -1
+        op = 0
 
-        while op != 0:
+        while op != 11:
 
-            UI.menu()
-
-            op = int(input("Escolha uma opção: "))
+            op = UI.menu()
 
             if op == 1:
                 UI.inserir_time()
@@ -264,9 +297,11 @@ class UI:
             elif op == 10:
                 UI.transferir_jogador()
 
-            elif op == 0:
+            elif op == 11:
                 print("Programa encerrado!")
 
             else:
                 print("Opção inválida!")
+
+
 UI.main()

@@ -141,9 +141,11 @@ class PacienteUI:
     
     @classmethod 
     def aniversariantes(cls):
-        print(f"\nAniversariantes do mês {datetime.now().month}:")
+        i = int(input("escolha um mês de 1 a 12: "))
+
+        print(f"\nAniversariantes do mês {i}:")
         for x in cls.__pacientes:
-            if x.get_nascimento().month == datetime.now().month:
+            if x.get_nascimento().month == i:
                 print(f"Nome: {x.get_nome()} - Aniversário: {x.get_nascimento().day}/{x.get_nascimento().month}")
 
 PacienteUI.main()

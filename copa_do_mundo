@@ -1,0 +1,203 @@
+from enum import Enum
+from datetime import datetime
+
+class Grupo(Enum):
+    A = 1
+    B = 2
+    C = 3
+    D = 4
+    E = 5
+    F = 6
+    G = 7
+    H = 8
+    I = 9
+    J = 10
+    K = 11
+    L = 12
+
+class Fase(Enum):
+    Grupos = 1
+    dezesseisAvos = 2
+    Oitavas = 3
+    Quartas = 4
+    Semifinais = 5
+    TerceiroLugar = 6
+    Final = 7
+
+class pais:
+    def __init__(self, id, nm, sg, gp):
+        self.set_id(id)
+        self.set_nome(nm)
+        self.set_sigla(sg)
+        self.set_grupo(gp)
+    
+    def set_id(self, id):
+        if id < 0: raise ValueError("id não pode ser negativo")
+        self.__id = id
+
+    def set_nome(self, nm):
+        if nm == '': raise ValueError("nome não pode ser vazio")
+        self.__nome = nm
+
+    def set_sigla(self, sg):
+        if sg == '': raise ValueError("sigla não pode ser vazia")
+        self.__sigla = sg
+
+    def set_grupo(self, gp):
+        if gp not in [1,2,3,4,5,6,7,8,9,10,11,12]: raise ValueError("O valor do grupo deve estar entre 1 e 12")
+        self.__grupo = Grupo(gp)
+        
+    def get_id(self): return self.__id
+
+    def get_nome(self): return self.__nome
+    
+    def get_sigla(self): return self.__sigla
+    
+    def get_grupo(self): return self.__grupo
+
+    def __str__(self):
+        return f"{self.__id} - {self.__nome} - {self.__sigla} - {self.__grupo}"
+    
+class jogo:
+    def __init__(self, id, id_pais1, id_pais2, gols1, gols2, fase, data_hora):
+        self.set_id(id)
+        self.set_id_pais1(id_pais1)
+        self.set_id_pais2(id_pais2)
+        self.set_gols1(gols1)
+        self.set_gols2(gols2)
+        self.set_fase(fase)
+        self.set_data_hora(data_hora)
+
+    def set_id(self, id):
+        if id < 0: raise ValueError("id não pode ser negativo") 
+        self.__id = id
+
+    def set_id_pais1(self, id_p1):
+        if id_p1 < 0: raise ValueError("id do país 1 não pode ser negativo") 
+        self.__id_pais1 = id_p1
+
+    def set_id_pais2(self, id_p2):
+        if id_p2 < 0: raise ValueError("id do país 2 não pode ser negativo") 
+        self.__id_pais2 = id_p2
+
+    def set_gols1(self, g1):
+        if g1 < 0: raise ValueError("gols do time 1 não podem ser negativos") 
+        self.__gols1 = g1
+
+    def set_gols2(self, g2):
+        if g2 < 0: raise ValueError("gols do time 2 não podem ser negativos") 
+        self.__gols2 = g2
+
+    def set_fase(self, fase):
+        if fase not in [1, 2, 3, 4, 5, 6, 7]: raise ValueError("o valor da fase precisa estar entre 1 e 7") 
+        self.__fase = Fase(fase)
+
+    def set_data_hora(self, dh): 
+        self.__data_hora = dh
+
+    def get_id(self): return self.__id
+
+    def get_id_pais1(self): return self.__id_pais1
+    
+    def get_id_pais2(self): return self.__id_pais2
+    
+    def get_gols1(self): return self.__gols1
+    
+    def get_gols2(self): return self.__gols2
+    
+    def get_fase(self): return self.__fase
+    
+    def get_data_hora(self): return self.__data_hora
+
+    def __str__(self):
+        return f"{self.__id} - {self.__id_pais1} - {self.__id_pais2} - {self.__gols1} - {self.__gols2} - {self.__fase} - {self.__data_hora}"
+    
+class UI:
+    __jogos = [] # Lista em memória para manter os jogos cadastrados
+
+    @staticmethod
+    def menu():
+        print("\n" + "="*30)
+        print("  SISTEMA COPA DO MUNDO 2026 ")
+        print("="*30)
+        print("1 - Cadastrar Jogo")
+        print("2 - Listar Todos os Jogos")
+        print("3 - Sair")
+        try:
+            return int(input("Escolha uma opção: "))
+        except ValueError:
+            return 0
+
+    @classmethod
+    def inserir(cls):
+        print("\n--- CADASTRO DE NOVO JOGO ---")
+        try:
+            id_jogo = int(input("ID do Jogo: "))
+            
+            # Cadastro dinâmico do País 1 para associar ao jogo
+            print("\n-> Dados do País 1:")
+            id_p1 = int(input("  ID do País: "))
+            nome_p1 = input("  Nome do País: ")
+            sigla_p1 = input("  Sigla do País (Ex: BRA): ")
+            print("  Opções de Grupo: " + ", ".join([f"{g.value}-{g.name}" for g in Grupo]))
+            grupo_p1 = Grupo(int(input("  Escolha o número do Grupo: ")))
+            pais1 = Pais(id_p1, nome_p1, sigla_p1, grupo_p1)
+
+            # Cadastro dinâmico do País 2 para associar ao jogo
+            print("\n-> Dados do País 2:")
+            id_p2 = int(input("  ID do País: "))
+            nome_p2 = input("  Nome do País: ")
+            sigla_p2 = input("  Sigla do País (Ex: FRA): ")
+            grupo_p2 = Grupo(int(input("  Escolha o número do Grupo: ")))
+            pais2 = Pais(id_p2, nome_p2, sigla_p2, grupo_p2)
+
+            # Detalhes da Partida
+            print("\n-> Detalhes do Confronto:")
+            gols1 = int(input(f"  Gols do {pais1.get_nome()}: "))
+            gols2 = int(input(f"  Gols do {pais2.get_nome()}: "))
+            
+            print("  Opções de Fase: " + ", ".join([f"{f.value}-{f.name}" for f in Fase]))
+            fase_jogo = Fase(int(input("  Escolha o número da Fase: ")))
+            
+            data_str = input("  Data e Hora (Formato: DD/MM/AAAA HH:MM): ")
+            data_hora = datetime.strptime(data_str, "%d/%m/%Y %H:%M")
+
+            # Instanciação do Jogo utilizando os objetos Pais criados
+            novo_jogo = Jogo(id_jogo, pais1, pais2, gols1, gols2, fase_jogo, data_hora)
+            cls.__jogos.append(novo_jogo)
+            print("\n✅ Jogo e países cadastrados com sucesso!")
+
+        except ValueError as e:
+            print(f"\n❌ Erro de validação/digitação: {e}")
+        except Exception as e:
+            print(f"\n❌ Ocorreu um erro inesperado: {e}")
+
+    @classmethod
+    def listar(cls):
+        print("\n--- JOGOS DA COPA DO MUNDO 2026 ---")
+        if not cls.__jogos:
+            print("Nenhum jogo cadastrado até o momento.")
+            return
+        
+        for jogo in cls.__jogos:
+            print("-" * 40)
+            print(jogo)
+        print("-" * 40)
+
+    @staticmethod
+    def main():
+        opcao = 0
+        while opcao != 3:
+            opcao = UI.menu()
+            if opcao == 1:
+                UI.inserir()
+            elif opcao == 2:
+                UI.listar()
+            elif opcao == 3:
+                print("\nEncerrando o sistema da Copa 2026. Até logo!")
+            else:
+                print("\n⚠️ Opção inválida! Tente novamente.")
+
+# Execução do programa principal
+if __name__ == "__main__":
+    UI.main()
